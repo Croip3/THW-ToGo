@@ -1,0 +1,7 @@
+// Custom Bootstrap build: overriding $primary here (instead of overriding
+// dozens of individual --bs-btn-*/--bs-list-group-*/... CSS variables on top
+// of the precompiled CSS) so every Bootstrap component derives its shades,
+// subtle backgrounds and text-emphasis colors consistently from one place.
+$primary: #003399; // Official THW blue, sampled from src/assets/logo/thw-emblem.webp.
+
+@import 'bootstrap/scss/bootstrap';
