@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import type { Answer } from '@/types/models'
-import { useLearningStore, type SessionMode, TEST_SESSION_SIZE } from '@/stores/useLearningStore'
+import {
+  useLearningStore,
+  type SessionMode,
+  TEST_SESSION_SIZE,
+  TEST_PASS_RATIO,
+} from '@/stores/useLearningStore'
 import type { Grade } from '@/services/srsService'
 import { shuffleCopy } from '@/utils/random'
 
@@ -87,6 +92,11 @@ const scorePercent = computed(() => {
   const total = store.queue.length
   return total === 0 ? 0 : Math.round((store.sessionCorrect / total) * 100)
 })
+
+const testPassed = computed(() => {
+  const total = store.queue.length
+  return total > 0 && store.sessionCorrect / total >= TEST_PASS_RATIO
+})
 </script>
 
 <template>
@@ -111,6 +121,9 @@ const scorePercent = computed(() => {
 
         <p v-if="props.mode === 'test'" class="mb-3">
           Ergebnis: <strong>{{ store.sessionCorrect }}/{{ store.queue.length }}</strong> richtig ({{ scorePercent }}%)
+          <span class="badge ms-2" :class="testPassed ? 'bg-success' : 'bg-danger'">
+            {{ testPassed ? 'Bestanden' : 'Nicht bestanden' }}
+          </span>
         </p>
         <template v-else>
           <p class="mb-1">Richtig: <strong>{{ store.sessionCorrect }}</strong></p>
@@ -183,7 +196,7 @@ const scorePercent = computed(() => {
       <div class="card shadow-sm">
         <div class="card-body">
           <span v-if="props.mode" class="badge bg-secondary mb-2">
-            Thema {{ store.currentCard?.question.topic }}
+            Themenabschnitt {{ store.currentCard?.question.topic }}
           </span>
           <h2 class="h5 card-title mb-3">{{ store.currentCard?.question.question }}</h2>
 
